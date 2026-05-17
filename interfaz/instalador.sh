@@ -7,7 +7,7 @@ echo "=========================================="
 apt update
 
 # 2. Instalar el entorno gráfico súper ligero (XFCE) y el gestor de ventanas
-apt install -y xfce4 xfce4-goodies lightdm
+apt install -y xfce4 xfce4-goodies lightdm linux-image-amd64
 
 # 3. Instalar Plank (El "Dock" flotante estilo Mac para poner las apps abajo)
 apt install -y plank
