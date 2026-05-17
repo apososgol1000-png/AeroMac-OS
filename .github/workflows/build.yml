@@ -37,3 +37,9 @@ jobs:
         echo "=== COMPRIMIENDO EL SISTEMA OPERATIVO ==="
         sudo mksquashfs ./debian-base filesystem.squashfs -comp xz
         echo "¡AeroMac-OS ha sido empaquetado con éxito en un solo archivo ejecutable!"
+
+    - name: Subir AeroMac-OS empaquetado a GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: AeroMac-OS-Sistema
+        path: filesystem.squashfs
