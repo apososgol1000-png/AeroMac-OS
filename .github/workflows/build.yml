@@ -28,6 +28,7 @@ jobs:
     - name: Ejecutar instalador dentro de AeroMac-OS
       run: |
         echo "=== ENTRANDO A AEROMAC-OS MEDIANTE CHROOT ==="
+        sudo cp /etc/resolv.conf ./debian-base/etc/resolv.conf
         sudo chroot ./debian-base /bin/bash /tmp/instalador.sh
         echo "¡La interfaz gráfica ha sido instalada con éxito dentro del sistema!"
         
