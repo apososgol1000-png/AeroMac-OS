@@ -43,3 +43,36 @@ jobs:
       with:
         name: AeroMac-OS-Sistema
         path: filesystem.squashfs
+
+    - name: Estructurar y compilar imagen ISO booteable
+      run: |
+        echo "=== INSTALANDO HERRAMIENTAS DE ISO ==="
+        sudo apt update && sudo apt install -y genisoimage isolinux syslinux-common
+
+        echo "=== CREANDO ESTRUCTURA LIVE ==="
+        mkdir -p iso_root/live
+        
+        # Copiar los archivos de arranque (Kernel e Initrd) desde tu base Debian
+        cp ./debian-base/vmlinuz iso_root/live/
+        cp ./debian-base/initrd.img iso_root/live/
+        
+        # Mover tu archivo SquashFS al directorio de la ISO
+        mv filesystem.squashfs iso_root/live/
+        
+        # Copiar los componentes del sistema de arranque Isolinux
+        cp /usr/lib/ISOLINUX/isolinux.bin iso_root/isolinux/
+        cp /usr/lib/syslinux/modules/bios/ldlinux.c32 iso_root/isolinux/
+
+        echo "=== ENSAMBLANDO LA ISO FINAL ==="
+        genisoimage -o AeroMac-OS.iso \
+          -b isolinux/isolinux.bin \
+          -c isolinux/boot.cat \
+          -no-emul-boot -boot-load-size 4 -boot-info-table \
+          iso_root
+
+    - name: Subir AeroMac-OS ISO a GitHub
+      uses: actions/upload-artifact@v4
+      with:
+        name: AeroMac-OS-ISO-Instalable
+        path: AeroMac-OS.iso
+        
