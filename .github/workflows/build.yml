@@ -32,3 +32,8 @@ jobs:
         sudo chroot ./debian-base /bin/bash /tmp/instalador.sh
         echo "¡La interfaz gráfica ha sido instalada con éxito dentro del sistema!"
         
+    - name: Convertir AeroMac-OS en formato SquashFS
+      run: |
+        echo "=== COMPRIMIENDO EL SISTEMA OPERATIVO ==="
+        sudo mksquashfs ./debian-base filesystem.squashfs -comp xz
+        echo "¡AeroMac-OS ha sido empaquetado con éxito en un solo archivo ejecutable!"
