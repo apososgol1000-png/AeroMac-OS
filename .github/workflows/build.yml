@@ -24,3 +24,10 @@ jobs:
         echo "=== INYECTANDO NUESTROS SCRIPT DE INTERFAZ ==="
         sudo cp interfaz/instalador.sh ./debian-base/tmp/
         echo "El instalador visual ya está dentro del sistema de archivos de Debian."
+
+    - name: Ejecutar instalador dentro de AeroMac-OS
+      run: |
+        echo "=== ENTRANDO A AEROMAC-OS MEDIANTE CHROOT ==="
+        sudo chroot ./debian-base /bin/bash /tmp/instalador.sh
+        echo "¡La interfaz gráfica ha sido instalada con éxito dentro del sistema!"
+        
