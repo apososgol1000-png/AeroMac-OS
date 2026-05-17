@@ -53,6 +53,8 @@ jobs:
         mkdir -p iso_root/live
         
         # Copiar los archivos de arranque (Kernel e Initrd) desde tu base Debian
+        echo "=== REVISANDO QUÉ HAY EN BOOT ==="
+        ls -la ./debian-base/chroot/boot/ || ls -la ./debian-base/boot/
         cp ./debian-base/chroot/boot/vmlinuz* iso_root/live/vmlinuz
         cp ./debian-base/chroot/boot/initrd.img* iso_root/live/initrd.img
         
