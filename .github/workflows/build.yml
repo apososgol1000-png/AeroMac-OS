@@ -1,10 +1,18 @@
 name: Constructor
 on:
   push:
-      branches: [main]
+    branches: [main]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - run: cat sistema/branding.txt
+    
+    - name: Leer datos de marca
+      run: cat sistema/branding.txt
+      
+    - name: Verificar script de interfaz
+      run: |
+            echo "=== REVISANDO RECETA DE INSTALACIÓN ==="
+            bash -n interfaz/instalador.sh
+            echo "¡El script de AeroMac-OS no tiene errores de sintaxis!"
