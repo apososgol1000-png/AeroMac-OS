@@ -1,80 +1,33 @@
-name: Constructor
-on:
-  push:
-    branches: [main]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Instalar herramientas de empaquetado
-      run: |
-        sudo apt update
-        sudo apt install -y debootstrap squashfs-tools
-      
-    - name: Descargar y Crear Base Debian 12 (Bookworm)
-      run: |
-        echo "=== DESCARGANDO BASE DE DEBIAN 12 DESDE INTERNET ==="
-        sudo debootstrap --variant=minbase bookworm ./debian-base http://deb.debian.org/debian/
-        echo "¡Base descargada con éxito en la carpeta ./debian-base!"
-
-    - name: Inyectar interfaz AeroMac-OS
-      run: |
-        echo "=== INYECTANDO NUESTROS SCRIPT DE INTERFAZ ==="
-        sudo cp interfaz/instalador.sh ./debian-base/tmp/
-        echo "El instalador visual ya está dentro del sistema de archivos de Debian."
-
-    - name: Ejecutar instalador dentro de AeroMac-OS
-      run: |
-        echo "=== ENTRANDO A AEROMAC-OS MEDIANTE CHROOT ==="
-        sudo cp /etc/resolv.conf ./debian-base/etc/resolv.conf
-        sudo chroot ./debian-base /bin/bash /tmp/instalador.sh
-        echo "¡La interfaz gráfica ha sido instalada con éxito dentro del sistema!"
-        
-    - name: Convertir AeroMac-OS en formato SquashFS
-      run: |
-        echo "=== COMPRIMIENDO EL SISTEMA OPERATIVO ==="
-        sudo mksquashfs ./debian-base filesystem.squashfs -comp xz
-        echo "¡AeroMac-OS ha sido empaquetado con éxito en un solo archivo ejecutable!"
-
-    - name: Subir AeroMac-OS empaquetado a GitHub
-      uses: actions/upload-artifact@v4
-      with:
-        name: AeroMac-OS-Sistema
-        path: filesystem.squashfs
-
-    - name: Estructurar y compilar imagen ISO booteable
-      run: |
+- name: Estructurar y compilar imagen ISO booteable
+  run: |
         echo "=== INSTALANDO HERRAMIENTAS DE ISO ==="
         sudo apt update && sudo apt install -y genisoimage isolinux syslinux-common
 
         echo "=== CREANDO ESTRUCTURA LIVE ==="
         mkdir -p iso_root/live
+        mkdir -p iso_root/isolinux
         
-        # Copiar los archivos de arranque (Kernel e Initrd) desde tu base Debian
         echo "=== REVISANDO QUÉ HAY EN BOOT ==="
         ls -la ./debian-base/chroot/boot/ || ls -la ./debian-base/boot/
         cp ./debian-base/boot/vmlinuz-6.1.0-47-amd64 iso_root/live/vmlinuz
         cp ./debian-base/boot/initrd.img-6.1.0-47-amd64 iso_root/live/initrd.img
         
-        # Mover tu archivo SquashFS al directorio de la ISO
         mv filesystem.squashfs iso_root/live/
         
-        # Copiar los componentes del sistema de arranque Isolinux
         cp /usr/lib/ISOLINUX/isolinux.bin iso_root/isolinux/
         cp /usr/lib/syslinux/modules/bios/ldlinux.c32 iso_root/isolinux/
 
-        echo "=== ENSAMBLANDO LA ISO FINAL ==="
-        genisoimage -o AeroMac-OS.iso \
+        echo "=== ENSAMBLANDO LA ISO FINAL CON NOMBRES MODERNOS ==="
+        genisoimage -R -J -o AeroMac-OS.iso \
           -b isolinux/isolinux.bin \
           -c isolinux/boot.cat \
           -no-emul-boot -boot-load-size 4 -boot-info-table \
           iso_root
 
-    - name: Subir AeroMac-OS ISO a GitHub
-      uses: actions/upload-artifact@v4
-      with:
+- name: Subir AeroMac-OS ISO a GitHub
+  uses: actions/upload-artifact@v4
+  with:
         name: AeroMac-OS-ISO-Instalable
-        path: AeroMac-OS.iso
-        
+        path: AeroMac-OS.isowith:
+            name: AeroMac-OS-ISO-Instalable
+            path: AeroMac-OS.iso
