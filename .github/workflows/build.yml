@@ -53,8 +53,8 @@ jobs:
         mkdir -p iso_root/live
         
         # Copiar los archivos de arranque (Kernel e Initrd) desde tu base Debian
-        cp ./debian-base/vmlinuz iso_root/live/
-        cp ./debian-base/initrd.img iso_root/live/
+        cp ./debian-base/boot/vmlinuz* iso_root/live/vmlinuz
+        cp ./debian-base/boot/initrd.img* iso_root/live/initrd.img
         
         # Mover tu archivo SquashFS al directorio de la ISO
         mv filesystem.squashfs iso_root/live/
