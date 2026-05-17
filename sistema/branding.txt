@@ -1,0 +1,4 @@
+NOMBRE_SISTEMA="AeroMac-OS"
+VERSION="1.0.0-Beta"
+CREADOR="apososgol1000-png"
+DESCRIPCION="Sistema Operativo ligero basado en Linux con interfaz personalizada estilo Mac."
