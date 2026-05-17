@@ -61,12 +61,21 @@ jobs:
         cp ./debian-base/boot/vmlinuz-6.1.0-47-amd64 iso_root/live/vmlinuz
         cp ./debian-base/boot/initrd.img-6.1.0-47-amd64 iso_root/live/initrd.img
         
-        # Mover tu archivo SquashFS al directorio de la ISO
-        mv filesystem.squashfs iso_root/live/
+        # Usamos 'cp' en lugar de 'mv' para evitar conflictos con el paso anterior de GitHub
+        cp filesystem.squashfs iso_root/live/
         
         # Copiar los componentes del sistema de arranque Isolinux
         cp /usr/lib/ISOLINUX/isolinux.bin iso_root/isolinux/
         cp /usr/lib/syslinux/modules/bios/ldlinux.c32 iso_root/isolinux/
+
+        # === INYECCIÓN DEL REGLAMENTO DE ARRANQUE AUTÓNOMO ===
+        echo "=== CREANDO CONFIGURACIÓN DE ARRANQUE ==="
+        cat << 'EOF' > iso_root/isolinux/isolinux.cfg
+        default live
+        label live
+          kernel /live/vmlinuz
+          append initrd=/live/initrd.img boot=live quiet
+        EOF
 
         echo "=== ENSAMBLANDO LA ISO FINAL ==="
         genisoimage -R -J -o AeroMac-OS.iso \
